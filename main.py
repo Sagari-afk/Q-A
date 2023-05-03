@@ -36,22 +36,12 @@ class GamePlay:
         lucy_ins = Lucy(self.get_data())
 
         self.graphic.create_text(text=great_txt(text_const.hello))
-        while not self.graphic.clicked:
-            self.graphic.create_button(func=self.graphic.button_was_clicked)
+        self.graphic.create_button("Ask", func=self.graphic.change_bg)
 
-        self.graphic.change_bg("Ask")
-        self.graphic.clicked = False
+        self.graphic.create_button(func=self.graphic.create_entries)
+        self.graphic.create_button(func=self.graphic.get_from_entries)
 
-        while not self.graphic.clicked:
-            self.graphic.create_button(func=self.graphic.button_was_clicked)
-        self.graphic.create_entries()
-        self.graphic.clicked = False
-
-        while not self.graphic.clicked:
-            self.graphic.create_button(func=self.graphic.button_was_clicked)
-        self.graphic.get_from_entries()
-
-        print(self.graphic.name1_entry, self.graphic.name2_entry)
+        # print(self.graphic.name1_entry, self.graphic.name2_entry)
 
         # lucy_ins.make_team(self.graphic.name1, button1, self.graphic.name2, button2)
         #
