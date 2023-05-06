@@ -17,6 +17,7 @@ class Lucy:
                            button=button1)
         self.team_b = Team(name=name2,
                            button=button2)
+        print(f"Team {name1} and team {name2} were created")
         return self.team_a, self.team_b
 
     def ask_question(self, i):
