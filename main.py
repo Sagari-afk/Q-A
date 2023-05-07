@@ -1,21 +1,25 @@
 import text_const
 from api_call import MakeApiCall
 from validators import Replacer
-from lucy import Lucy
 from graphics.mainwin import *
 import pygame
-
-import time
 
 
 class GamePlay:
 
     def __init__(self):
+        self.lucy_ins = None
         self.data = None
-        self.graphic = MainWindow("graphics/lucy1.png", "graphics/lucy2.png", "graphics/lucy3.png")
+
+        self.play_music()
+
+        self.data = self.get_data()
+        self.graphic = StartWin("graphics/lucy1.png", "graphics/lucy2.png", "graphics/lucy3.png", self.data)
+        self.graphic.end()
+        self.lucy_ins = self.graphic.lucy_ins
 
     @staticmethod
-    def music():
+    def play_music():
         pygame.init()
         pygame.mixer.music.load("lofi.mp3")
         pygame.mixer.music.play(loops=-1)
@@ -31,35 +35,11 @@ class GamePlay:
 
     def start(self):
 
-        self.music()
-        self.graphic.change_bg(None)
-        lucy_ins = Lucy(self.get_data())
-
-        self.graphic.create_text(text=great_txt(text_const.hello))
-        self.graphic.create_button("Ask", func=self.graphic.change_bg)
-
-        self.graphic.create_button(func=self.graphic.create_entries)
-        self.graphic.create_button(func=self.graphic.get_from_entries)
-
-        # print(self.graphic.name1_entry, self.graphic.name2_entry)
-
-        # lucy_ins.make_team(self.graphic.name1, button1, self.graphic.name2, button2)
-        #
-        # time.sleep(3)
-        #
-        # for i in range(len(self.data)):
-        #     lucy_ins.ask_question(i)
-        #     time.sleep(2)
-        #
-        #     lucy_ins.show_answers(i)
-        #
-        #     print(self.data[i]["all_answers"])
-        #
-        #     time.sleep(5)
-        #     lucy_ins.ans_check(i)
-        #
-        # lucy_ins.get_scores()
+        self.graphic = PlayWin("graphics/lucy1.png", "graphics/lucy2.png", "graphics/lucy3.png",
+                               self.lucy_ins, self.data)
         self.graphic.end()
+
+        self.lucy_ins.get_scores()
 
 
 if __name__ == "__main__":
