@@ -1,4 +1,3 @@
-import text_const
 from api_call import MakeApiCall
 from validators import Replacer
 from graphics.mainwin import *
@@ -8,15 +7,11 @@ import pygame
 class GamePlay:
 
     def __init__(self):
+        self.graphic = None
         self.lucy_ins = None
         self.data = None
 
         self.play_music()
-
-        self.data = self.get_data()
-        self.graphic = StartWin("graphics/lucy1.png", "graphics/lucy2.png", "graphics/lucy3.png", self.data)
-        self.graphic.end()
-        self.lucy_ins = self.graphic.lucy_ins
 
     @staticmethod
     def play_music():
@@ -34,14 +29,31 @@ class GamePlay:
         return data
 
     def start(self):
+        while True:
+            self.data = self.get_data()
+            for i in range(len(self.data)):
+                print(self.data[i]["correct_answer"])
 
-        self.graphic = PlayWin("graphics/lucy1.png", "graphics/lucy2.png", "graphics/lucy3.png",
-                               self.lucy_ins, self.data)
-        self.graphic.end()
+            self.graphic = StartWin("graphics/lucy1.png", "graphics/lucy2.png", "graphics/lucy3.png",
+                                    "graphics/main_lucy.png", self.data, "graphics/PLAY.png")
+            self.graphic.end()
+            self.lucy_ins = self.graphic.lucy_ins
 
-        self.lucy_ins.get_scores()
+            self.graphic = PlayWin("graphics/lucy1.png", "graphics/lucy2.png", "graphics/lucy3.png",
+                                   "graphics/main_lucy.png", self.lucy_ins, self.data)
+            self.graphic.end()
+
+            self.graphic = EndWIn("graphics/lucy1.png", "graphics/lucy2.png", "graphics/lucy3.png",
+                                  "graphics/main_lucy.png", self.lucy_ins)
+            self.graphic.end()
+            if not self.graphic.continue_game_bool:
+                break
 
 
 if __name__ == "__main__":
-    new_game = GamePlay()
-    new_game.start()
+    try:
+        new_game = GamePlay()
+        new_game.start()
+    except Exception as e:
+        print(e)
+

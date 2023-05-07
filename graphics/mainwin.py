@@ -14,7 +14,7 @@ def great_txt(txt):
 
 
 class MainWindow:
-    def __init__(self, img1, img2, img3, data):
+    def __init__(self, img1, img2, img3, img4):
         self.root = tk.Tk()
         self.root.title("Q & A")
         self.root.geometry("800x600")
@@ -23,12 +23,12 @@ class MainWindow:
         self.bg1 = tk.PhotoImage(file=img1)
         self.bg2 = tk.PhotoImage(file=img2)
         self.bg3 = tk.PhotoImage(file=img3)
+        self.bg4 = tk.PhotoImage(file=img4)
 
         self.text_label1 = None
         self.text_label2 = None
         self.name1_entry = None
         self.name2_entry = None
-        self.data = data
 
     def change_bg(self, mood=None):
         match mood:
@@ -36,6 +36,8 @@ class MainWindow:
                 bg_label = tk.Label(self.root, image=self.bg1)
             case "Sad":
                 bg_label = tk.Label(self.root, image=self.bg2)
+            case "Start":
+                bg_label = tk.Label(self.root, image=self.bg4)
             case _:
                 bg_label = tk.Label(self.root, image=self.bg3)
 
@@ -77,14 +79,21 @@ class MainWindow:
 
 
 class StartWin(MainWindow):
-    def __init__(self, img1, img2, img3, data):
-        super().__init__(img1, img2, img3, data)
+    def __init__(self, img1, img2, img3, img4, data, img5):
+        super().__init__(img1, img2, img3, img4)
 
+        self.data = data
+        self.lucy_ins = Lucy(self.data)
+        self.img = tk.PhotoImage(file=img5)
+
+        self.change_bg("Start")
+        self.b = tk.Button(self.root, image=self.img, font=("Arial", 20), command=lambda: self.start())
+        self.b.place(relheight=0.14, relwidth=0.25, relx=0.54, rely=0.25)
+
+    def start(self):
         self.change_bg("Ask")
         self.create_text(text=great_txt(text_const.hello))
         self.create_button(func=self.create_entries)
-
-        self.lucy_ins = Lucy(self.data)
 
     def create_entries(self):
         super().create_entries()
@@ -96,8 +105,8 @@ class StartWin(MainWindow):
 
 
 class PlayWin(MainWindow):
-    def __init__(self, img1, img2, img3, lucy_ins, data):
-        super().__init__(img1, img2, img3, data)
+    def __init__(self, img1, img2, img3, img4, lucy_ins, data):
+        super().__init__(img1, img2, img3, img4)
         self.team = None
         self.b0 = None
         self.b1 = None
@@ -106,6 +115,7 @@ class PlayWin(MainWindow):
         self.clicked = None
         self.i = 0
 
+        self.data = data
         self.lucy_ins = lucy_ins
 
         self.change_bg()
@@ -139,16 +149,16 @@ class PlayWin(MainWindow):
                                 fg='#ffffff', command=lambda: self.was_clicked(self.b2, answers, correct_answer))
             self.b3 = tk.Button(self.root, text=answers[3], font=("Arial", 20), bg="#B22222",
                                 fg='#ffffff', command=lambda: self.was_clicked(self.b3, answers, correct_answer))
-            self.b2.place(relheight=0.075, relwidth=0.4, relx=0.54, rely=0.4)
-            self.b3.place(relheight=0.075, relwidth=0.4, relx=0.54, rely=0.5)
+            self.b2.place(relheight=0.075, relwidth=0.5, relx=0.44, rely=0.4)
+            self.b3.place(relheight=0.075, relwidth=0.5, relx=0.44, rely=0.5)
         else:
             self.b0 = tk.Button(self.root, text=answers[0], font=("Arial", 20), bg="#B22222",
                                 fg='#ffffff', command=lambda: self.was_clicked(self.b0, answers, correct_answer))
             self.b1 = tk.Button(self.root, text=answers[1], font=("Arial", 20), bg="#B22222",
                                 fg='#ffffff', command=lambda: self.was_clicked(self.b1, answers, correct_answer))
 
-        self.b0.place(relheight=0.075, relwidth=0.4, relx=0.54, rely=0.2)
-        self.b1.place(relheight=0.075, relwidth=0.4, relx=0.54, rely=0.3)
+        self.b0.place(relheight=0.075, relwidth=0.5, relx=0.44, rely=0.2)
+        self.b1.place(relheight=0.075, relwidth=0.5, relx=0.44, rely=0.3)
 
     def was_clicked(self, b, answers, correct_answer):
         if b == self.b0:
@@ -177,3 +187,27 @@ class PlayWin(MainWindow):
             self.unbinding('l')
             self.delete(self.root)
 
+
+class EndWIn(MainWindow):
+    def __init__(self, img1, img2, img3, img4, lucy_ins):
+        super().__init__(img1, img2, img3, img4)
+
+        self.continue_game_bool = None
+        self.change_bg("Ask")
+        self.create_text(text=great_txt(text_const.end_game.format(name1=lucy_ins.team_a["name"],
+                                                                   score1=lucy_ins.team_a["score"],
+                                                                   name2=lucy_ins.team_b["name"],
+                                                                   score2=lucy_ins.team_b["score"])))
+
+        self.lucy_ins = lucy_ins
+        self.b0 = tk.Button(self.root, text="Play again", font=("Arial", 20), bg="#B22222",
+                            fg='#ffffff', command=lambda: self.continue_game(True))
+        self.b1 = tk.Button(self.root, text="Finish", font=("Arial", 20), bg="#B22222",
+                            fg='#ffffff', command=lambda: self.continue_game(False))
+
+        self.b0.place(relheight=0.075, relwidth=0.4, relx=0.54, rely=0.2)
+        self.b1.place(relheight=0.075, relwidth=0.4, relx=0.54, rely=0.3)
+
+    def continue_game(self, want):
+        self.continue_game_bool = want
+        self.delete(self.root)
