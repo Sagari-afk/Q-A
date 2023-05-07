@@ -1,3 +1,6 @@
+from random import shuffle
+
+
 class Replacer:
 
     def __init__(self, raw_data) -> None:
@@ -19,4 +22,5 @@ class Replacer:
         for i in range(len(res_data)):
             res_data[i]["all_answers"] = res_data[i]["incorrect_answers"].copy()
             res_data[i]["all_answers"].append(res_data[i]["correct_answer"])
+            shuffle(res_data[i]["all_answers"])
         return res_data

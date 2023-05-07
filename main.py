@@ -1,7 +1,6 @@
 import text_const
 from api_call import MakeApiCall
 from validators import Replacer
-from lucy import Lucy
 from graphics.mainwin import *
 import pygame
 
@@ -9,8 +8,15 @@ import pygame
 class GamePlay:
 
     def __init__(self):
+        self.lucy_ins = None
         self.data = None
-        self.graphic = StartWin("graphics/lucy1.png", "graphics/lucy2.png", "graphics/lucy3.png")
+
+        self.play_music()
+
+        self.data = self.get_data()
+        self.graphic = StartWin("graphics/lucy1.png", "graphics/lucy2.png", "graphics/lucy3.png", self.data)
+        self.graphic.end()
+        self.lucy_ins = self.graphic.lucy_ins
 
     @staticmethod
     def play_music():
@@ -29,23 +35,11 @@ class GamePlay:
 
     def start(self):
 
-        self.play_music()
-
+        self.graphic = PlayWin("graphics/lucy1.png", "graphics/lucy2.png", "graphics/lucy3.png",
+                               self.lucy_ins, self.data)
         self.graphic.end()
 
-        # for i in range(len(self.data)):
-        #     lucy_ins.ask_question(i)
-        #     time.sleep(2)
-        #
-        #     lucy_ins.show_answers(i)
-        #
-        #     print(self.data[i]["all_answers"])
-        #
-        #     time.sleep(5)
-        #     lucy_ins.ans_check(i)
-        #
-        # lucy_ins.get_scores()
-        self.graphic.end()
+        self.lucy_ins.get_scores()
 
 
 if __name__ == "__main__":
