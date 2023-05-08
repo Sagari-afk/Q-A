@@ -4,9 +4,11 @@ from graphics.mainwin import *
 import pygame
 
 
-class GamePlay:
+class GamePlay:     # responsible for initializing the game and playing it.
 
     def __init__(self):
+        # The constructor of GamePlay initializes graphic, lucy_ins,
+        # and data variables as None. play_music() function is called to play the background music.
         self.graphic = None
         self.lucy_ins = None
         self.data = None
@@ -15,6 +17,7 @@ class GamePlay:
 
     @staticmethod
     def play_music():
+        # initializes the Pygame module and plays the music loaded from the file
         pygame.init()
         pygame.mixer.music.load("lofi.mp3")
         pygame.mixer.music.play(loops=-1)
@@ -22,6 +25,8 @@ class GamePlay:
 
     @staticmethod
     def get_data():
+        # retrieve data from the API using MakeApiCall and Replacer classes.
+        # amount is the number of questions to retrieve from the API
         api_call = MakeApiCall({"amount": 10})
         raw_data = api_call.get_data("https://opentdb.com/api.php")
         val = Replacer(raw_data)
@@ -29,6 +34,11 @@ class GamePlay:
         return data
 
     def start(self):
+        # This function runs the game by first retrieving the data using
+        # the get_data() method. Then it initializes StartWin, PlayWin,
+        # and EndWIn classes with the appropriate parameters. Finally,
+        # the end() method of each class is called to run the game.
+        # If continue_game_bool is False, the game ends; otherwise, it continues running.
         while True:
             self.data = self.get_data()
             for i in range(len(self.data)):
@@ -50,10 +60,9 @@ class GamePlay:
                 break
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":      # statement is used to check whether the current module is being run as the main program
     try:
         new_game = GamePlay()
         new_game.start()
-    except Exception as e:
+    except Exception as e:      # If an exception occurs, it is caught by the except block
         print(e)
-
