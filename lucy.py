@@ -8,6 +8,10 @@ class Lucy:
         self.mood = None
 
     def make_team(self, name1, button1, name2, button2):
+        # Creates the two teams with names name1 and name2,
+        # and assigns them to team_a and team_b, respectively.
+        # The buttons used to represent the teams are also
+        # stored in the respective dictionaries.
         self.team_a = {'name': name1, 'button': button1, 'score': 0}
         self.team_b = {'name': name2, 'button': button2, 'score': 0}
         print(f"Team {name1} and team {name2} were created")
@@ -21,5 +25,5 @@ class Lucy:
     def incorrect_ans(team):
         team['score'] -= 2
 
-    def get_scores(self):
+    def get_scores(self):   # Returns the scores of both teams as a tuple
         return self.team_a['score'], self.team_b['score']
