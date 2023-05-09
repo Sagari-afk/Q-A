@@ -41,6 +41,8 @@ The Q-A program is built using Python 3.x and consists of the following modules:
 + `main.py`: This is the main module that contains the GamePlay class, which is responsible for running the program
 + `text_const.py`: Contains text constants for later usage
 + `validators.py`: This is the module thad make response data better to use
+- `graphics`:
+  + `mainwin.py`: This is the module that contains all GUI (Tkinter)
 
 
 ## Conclusion
