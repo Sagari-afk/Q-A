@@ -5,8 +5,8 @@ import text_const                               # used to store text constants
 from lucy import Lucy
 
 
-def great_txt(txt):                             # a function that takes the text txt, wraps it on a new line if the
-    txt = '\n'.join(wrap(txt, 50))              # length of the line exceeds 50 characters, and returns the new text.
+def great_txt(txt, n=50):                      # a function that takes the text txt, wraps it on a new line if the
+    txt = '\n'.join(wrap(txt, n))              # length of the line exceeds 50 characters, and returns the new text.
     return txt
 
 
@@ -64,6 +64,7 @@ class MainWindow:
         next_button = tk.Button(self.root, text="Next", font=("Arial", 20), bg="#B22222",
                                 fg='#ffffff', command=lambda: func(*args))
         next_button.place(relheight=0.07, relwidth=0.2, relx=0.74, rely=0.9)
+        return next_button
 
     def bindings(self, key):        # binds an event handler to a specific key press
         self.root.bind(key, lambda event: print("A was pressed"))
@@ -135,9 +136,10 @@ class PlayWin(MainWindow):
         self.change_bg()
         self.create_text(text=great_txt(text_const.start_game.format(name1=self.lucy_ins.team_a["name"],
                                                                      name2=self.lucy_ins.team_b["name"])))
-        self.create_button(data, self.i, func=self.play_play)
+        self.button_next = self.create_button(data, self.i, func=self.play_play)
 
     def play_play(self, data, i):
+        self.delete(self.button_next)
         # method is called when the button is clicked and takes the question,
         # answers, and correct answer data from the data parameter and uses it
         # to create the next question. It binds the 'a' and 'l' keys to a lambda
@@ -146,13 +148,16 @@ class PlayWin(MainWindow):
         question = data[i]["question"]
         answers = data[i]["all_answers"]
         correct_answer = data[i]["correct_answer"]
+        difficulty = data[i]["difficulty"]
 
-        self.root.bind('a', lambda event: self.ask(question, answers, correct_answer, 'a'))
-        self.root.bind('l', lambda event: self.ask(question, answers, correct_answer, 'l'))
+        self.root.bind('a', lambda event: self.ask(question, answers, correct_answer, 'a', difficulty))
+        self.root.bind('l', lambda event: self.ask(question, answers, correct_answer, 'l', difficulty))
+        self.root.bind('A', lambda event: self.ask(question, answers, correct_answer, 'a', difficulty))
+        self.root.bind('L', lambda event: self.ask(question, answers, correct_answer, 'l', difficulty))
 
         print(i)
 
-    def ask(self, question, answers, correct_answer, key):
+    def ask(self, question, answers, correct_answer, key, difficulty):
         # takes the question, answers, and correct answer as parameters,
         # along with a key that specifies which team is answering. It creates
         # buttons for each answer, binds the buttons to the was_clicked method,
@@ -162,27 +167,41 @@ class PlayWin(MainWindow):
             self.team = self.lucy_ins.team_a
         if key == 'l':
             self.team = self.lucy_ins.team_b
+        self.unbinding('a')
+        self.unbinding('l')
+        self.unbinding('A')
+        self.unbinding('L')
 
         self.create_text(text=great_txt(question))
-        if len(answers) == 4:
-            self.b0 = tk.Button(self.root, text=answers[0], font=("Arial", 20), bg="#B22222",
+        if len(answers) == 4 and difficulty == "easy":
+            self.ans_label = tk.Label(text="Your answer:", font=("Arial", 20), bg="#B22222", fg='#ffffff')
+            self.ans_entry = tk.Entry(self.root, font=("Arial", 20), fg="#B22222")
+            print(self.ans_entry.get(), "----> ans_entry.get()")
+            self.button_next = self.create_button(self.ans_entry, answers, correct_answer, func=self.was_clicked)
+
+            self.ans_label.place(relheight=0.08, relwidth=0.4, relx=0.54, rely=0.3)
+            self.ans_entry.place(relheight=0.08, relwidth=0.4, relx=0.54, rely=0.42)
+        elif len(answers) == 4:
+            self.b0 = tk.Button(self.root, text=great_txt(answers[0], 25), font=("Arial", 15), bg="#B22222",
                                 fg='#ffffff', command=lambda: self.was_clicked(self.b0, answers, correct_answer))
-            self.b1 = tk.Button(self.root, text=answers[1], font=("Arial", 20), bg="#B22222",
+            self.b1 = tk.Button(self.root, text=great_txt(answers[1], 25), font=("Arial", 15), bg="#B22222",
                                 fg='#ffffff', command=lambda: self.was_clicked(self.b1, answers, correct_answer))
-            self.b2 = tk.Button(self.root, text=answers[2], font=("Arial", 20), bg="#B22222",
+            self.b2 = tk.Button(self.root, text=great_txt(answers[2], 25), font=("Arial", 15), bg="#B22222",
                                 fg='#ffffff', command=lambda: self.was_clicked(self.b2, answers, correct_answer))
-            self.b3 = tk.Button(self.root, text=answers[3], font=("Arial", 20), bg="#B22222",
+            self.b3 = tk.Button(self.root, text=great_txt(answers[3], 25), font=("Arial", 15), bg="#B22222",
                                 fg='#ffffff', command=lambda: self.was_clicked(self.b3, answers, correct_answer))
             self.b2.place(relheight=0.075, relwidth=0.5, relx=0.44, rely=0.4)
             self.b3.place(relheight=0.075, relwidth=0.5, relx=0.44, rely=0.5)
+            self.b0.place(relheight=0.075, relwidth=0.5, relx=0.44, rely=0.2)
+            self.b1.place(relheight=0.075, relwidth=0.5, relx=0.44, rely=0.3)
         else:
-            self.b0 = tk.Button(self.root, text=answers[0], font=("Arial", 20), bg="#B22222",
+            self.b0 = tk.Button(self.root, text=great_txt(answers[0], 25), font=("Arial", 15), bg="#B22222",
                                 fg='#ffffff', command=lambda: self.was_clicked(self.b0, answers, correct_answer))
-            self.b1 = tk.Button(self.root, text=answers[1], font=("Arial", 20), bg="#B22222",
+            self.b1 = tk.Button(self.root, text=great_txt(answers[1]), font=("Arial", 15), bg="#B22222",
                                 fg='#ffffff', command=lambda: self.was_clicked(self.b1, answers, correct_answer))
 
-        self.b0.place(relheight=0.075, relwidth=0.5, relx=0.44, rely=0.2)
-        self.b1.place(relheight=0.075, relwidth=0.5, relx=0.44, rely=0.3)
+            self.b0.place(relheight=0.075, relwidth=0.5, relx=0.44, rely=0.2)
+            self.b1.place(relheight=0.075, relwidth=0.5, relx=0.44, rely=0.3)
 
     def was_clicked(self, b, answers, correct_answer):
         # is called when a button is clicked and sets the clicked
@@ -200,15 +219,31 @@ class PlayWin(MainWindow):
             self.clicked = 2
         if b == self.b3:
             self.clicked = 3
+        try:
+            b = b.get()
+            print("1 proverka")
+            print(b.lower())
+            print(correct_answer.lower())
+            if b.lower() == correct_answer.lower():
+                print("2 proverka")
+                self.lucy_ins.correct_ans(self.team)
+                self.change_bg()
+                self.create_text(text=great_txt("Super!! It was a correct answer"))
+            else:
+                print("nepravilny otvet")
+                self.lucy_ins.incorrect_ans(self.team)
+                self.change_bg('Sad')
+                self.create_text(text=great_txt("I`m sorry but you are wrong :("))
 
-        if answers[self.clicked] == correct_answer:
-            self.lucy_ins.correct_ans(self.team)
-            self.change_bg()
-            self.create_text(text=great_txt("Super!! It was a correct answer"))
-        else:
-            self.lucy_ins.incorrect_ans(self.team)
-            self.change_bg('Sad')
-            self.create_text(text=great_txt("I`m sorry but you are wrong((((((((("))
+        except Exception:
+            if answers[self.clicked] == correct_answer:
+                self.lucy_ins.correct_ans(self.team)
+                self.change_bg()
+                self.create_text(text=great_txt("Super!! It was a correct answer"))
+            else:
+                self.lucy_ins.incorrect_ans(self.team)
+                self.change_bg('Sad')
+                self.create_text(text=great_txt("I`m sorry but you are wrong :("))
 
         if self.i < 9:
             self.i += 1
@@ -216,6 +251,8 @@ class PlayWin(MainWindow):
         else:
             self.unbinding('a')
             self.unbinding('l')
+            self.unbinding('A')
+            self.unbinding('L')
             self.delete(self.root)
 
 
@@ -227,10 +264,12 @@ class EndWIn(MainWindow):
         self.change_bg("Ask")
 
         # Create text on the screen with the end game scores
-        self.create_text(text=great_txt(text_const.end_game.format(name1=lucy_ins.team_a["name"],
-                                                                   score1=lucy_ins.team_a["score"],
-                                                                   name2=lucy_ins.team_b["name"],
-                                                                   score2=lucy_ins.team_b["score"])))
+        if lucy_ins.team_a["score"] > lucy_ins.team_b["score"]:
+            self.create_text(text=great_txt(text_const.end_game.format(name1=lucy_ins.team_a["name"])))
+        elif lucy_ins.team_a["score"] < lucy_ins.team_b["score"]:
+            self.create_text(text=great_txt(text_const.end_game.format(name1=lucy_ins.team_b["name"])))
+        else:
+            self.create_text(text=great_txt(text_const.end_game.format(name1="a draw")))
 
         # Save the instance of the Lucy class for later use
         self.lucy_ins = lucy_ins

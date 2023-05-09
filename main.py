@@ -42,7 +42,7 @@ class GamePlay:     # responsible for initializing the game and playing it.
         while True:
             self.data = self.get_data()
             for i in range(len(self.data)):
-                print(self.data[i]["correct_answer"])
+                print(f"{self.data[i]['correct_answer']} ----> {self.data[i]['difficulty']}")
 
             self.graphic = StartWin("graphics/lucy1.png", "graphics/lucy2.png", "graphics/lucy3.png",
                                     "graphics/main_lucy.png", self.data, "graphics/PLAY.png")
